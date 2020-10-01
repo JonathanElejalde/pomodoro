@@ -24,15 +24,15 @@ while True:
     # call for the timer
     pomodoro.timer(minutes=pomodoro_time)
 
+    # Rest timer
+    pomodoro.timer(mode="rest")
+
     # Ask for satisfaction
     satisfaction = input("Type how well was your pomodoro. 1=Good - 2=Bad: ")
 
     # Add the pomodoro to the database
     pomodoro.add_pomodoro(pomodoro_time, category_id, project_id, satisfaction)
     conn.commit()
-
-    # Rest timer
-    pomodoro.timer(mode="rest")
 
     # Next step
     decision = pomodoro.next_decision()
