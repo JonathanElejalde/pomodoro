@@ -66,15 +66,17 @@ class Pomodoro:
         """
         while True:
             print("1- Create a pomodoro")
-            print("2- End the proyect")
-            print("3- Exit the program")
+            print("2- End the project")
+            print("3- Cancel the project")
+            print("4- Exit the program")
+
             decision = input("Type your option's number: ")
             try:
                 decision = int(decision)
             except:
                 print("Entry a number")
                 continue
-            if decision in [1, 2, 3]:
+            if decision in [1, 2, 3, 4]:
                 return decision
             else:
                 print("Your entry is not between the options")
@@ -112,14 +114,12 @@ class Pomodoro:
 
     def show_projects(self, category_id):
         """
-        This function search for the current projects in
-        the database.
-        
+        This function shows the projects that haven't been ended or canceled
         Returns:
             The new project id or an existing project
         """
         self.cursor.execute(
-            "SELECT id, name FROM Projects WHERE category_id= ? and end IS NULL",
+            "SELECT id, name FROM Projects WHERE category_id= ? and end IS NULL and canceled = 'No'",
             (category_id,),
         )
         projects = self.cursor.fetchall()
@@ -208,10 +208,22 @@ class Pomodoro:
         finished.
         
         Args:
-            project_id: Project's id
+            project_id: int
         """
         date = self._get_date()
         self.cursor.execute(
             "UPDATE Projects SET end= ? WHERE id= ?", (date, project_id)
+        )
+
+    def cancel_project(self, project_id):
+        """
+        Adds the date when we decide to cancel a project
+        
+        Args:
+            project_id: int
+        """
+        date = self._get_date()
+        self.cursor.execute(
+            "UPDATE Projects SET canceled=? WHERE id=?", (date, project_id)
         )
 

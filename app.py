@@ -41,6 +41,9 @@ while True:
     elif decision == 2:
         pomodoro.end_project(project_id)
         conn.commit()
+    elif decision == 3:
+        pomodoro.cancel_project(project_id)
+        conn.commit()
     else:
         break
 
