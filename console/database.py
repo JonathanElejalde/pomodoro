@@ -32,9 +32,12 @@ def create_database(cursor):
 if __name__ == "__main__":
 
     import sqlite3
+    import os
 
     # --CREATING THE DATABASE--
-    conn = sqlite3.connect("pomodoroTimer.db")
+    os.chdir("..")  # Go up one directory from working directory
+
+    conn = sqlite3.connect("data\pomodoros.db")
     cursor = conn.cursor()
 
     # This will run if the database is not created already
