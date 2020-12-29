@@ -120,8 +120,7 @@ class Recalls(object):
                 CREATE TABLE IF NOT EXISTS Recalls(
                     recall TEXT NOT NULL,
                     title TEXT NOT NULL,
-                    project_name TEXT NOT NULL,
-                    FOREIGN KEY (project_name) REFERENCES Project (project_name)
+                    project_name TEXT NOT NULL
                 );
                 """
             )

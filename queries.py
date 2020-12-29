@@ -135,7 +135,7 @@ class Pomodoro:
             print("Creating pomodoros database ...")
             conn = sqlite3.connect(self.database_path)
             cur = conn.cursor()
-            cursor.executescript(
+            cur.executescript(
                 """
             CREATE TABLE IF NOT EXISTS Pomodoros (
                 id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
