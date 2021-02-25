@@ -100,7 +100,8 @@ class Pomodoro:
             for category in categories:
                 print(str(category[0]) + "- " + category[1])
 
-        category_id = input('Type the category id or type "new" to create a new one: ')
+        category_id = input(
+            'Type the category id or type "new" to create a new one: ')
         try:
             if category_id == "new":
                 category_id = self._create_category()
@@ -120,7 +121,7 @@ class Pomodoro:
         """
         self.cursor.execute(
             "SELECT id, name FROM Projects WHERE category_id= ? and end IS NULL and canceled = 'No'",
-            (category_id,),
+            (category_id, ),
         )
         projects = self.cursor.fetchall()
         # If there are not projects in the category
@@ -131,7 +132,8 @@ class Pomodoro:
         for project in projects:
             print(str(project[0]) + "- " + project[1])
 
-        project_id = input('Type the project id or type "new" to create a new one: ')
+        project_id = input(
+            'Type the project id or type "new" to create a new one: ')
         try:
             if project_id == "new":
                 project_id = self._create_project(category_id)
@@ -152,12 +154,10 @@ class Pomodoro:
         """
         print("Creating a new category...")
         category_name = input("Add the category name: ")
-        self.cursor.execute(
-            "INSERT INTO Categories (category) VALUES (?)", (category_name,)
-        )
-        self.cursor.execute(
-            "SELECT id FROM Categories WHERE category= ?", (category_name,)
-        )
+        self.cursor.execute("INSERT INTO Categories (category) VALUES (?)",
+                            (category_name, ))
+        self.cursor.execute("SELECT id FROM Categories WHERE category= ?",
+                            (category_name, ))
         new_category_id = self.cursor.fetchone()[0]
 
         return new_category_id
@@ -187,6 +187,7 @@ class Pomodoro:
     def add_pomodoro(self, duration, category_id, project_id, satisfaction):
         """
         This function adds the pomodoro data into the database
+        right after we get the satisfaction response
         
         Args:
             duration: Pomodoro duration, normally 25 min
@@ -199,7 +200,14 @@ class Pomodoro:
         hour = self._get_date_hour()
         self.cursor.execute(
             "INSERT INTO Pomodoros (time, date, hour, category_id, project_id, satisfaction) VALUES (?, ?, ?, ?, ?,?)",
-            (duration, date, hour, category_id, project_id, satisfaction,),
+            (
+                duration,
+                date,
+                hour,
+                category_id,
+                project_id,
+                satisfaction,
+            ),
         )
 
     def end_project(self, project_id):
@@ -211,9 +219,8 @@ class Pomodoro:
             project_id: int
         """
         date = self._get_date()
-        self.cursor.execute(
-            "UPDATE Projects SET end= ? WHERE id= ?", (date, project_id)
-        )
+        self.cursor.execute("UPDATE Projects SET end= ? WHERE id= ?",
+                            (date, project_id))
 
     def cancel_project(self, project_id):
         """
@@ -223,7 +230,5 @@ class Pomodoro:
             project_id: int
         """
         date = self._get_date()
-        self.cursor.execute(
-            "UPDATE Projects SET canceled=? WHERE id=?", (date, project_id)
-        )
-
+        self.cursor.execute("UPDATE Projects SET canceled=? WHERE id=?",
+                            (date, project_id))
