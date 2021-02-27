@@ -1,7 +1,7 @@
 import sqlite3
 import datetime
 import os
-import time
+import pandas as pd
 
 
 class Pomodoro:
@@ -12,8 +12,26 @@ class Pomodoro:
     the length of the rest time.
     """
 
-    #database_path = "data\pomodoros.db"
-    database_path = 'pomodoro_prueba.db'
+    database_path = "data\\pomodoros.db"
+    #database_path = 'pomodoro_prueba.db'
+
+    QUERY = """
+    SELECT 
+    Categories.category as category, 
+    Projects.name as project, 
+    Projects.start as project_start,
+    Projects.end as project_end,
+    Projects.canceled as project_cancel,
+    Pomodoros.time as pomodoro_length,
+    Pomodoros.date as pomodoro_date,
+    Pomodoros.hour as pomodoro_hour,
+    Pomodoros.satisfaction as pomodoro_calification
+    FROM Pomodoros
+    INNER JOIN Projects
+    ON Pomodoros.project_id = Projects.id
+    INNER JOIN Categories
+    ON Pomodoros.category_id = Categories.id;
+    """
 
     def __init__(self):
         # create database if need
@@ -88,7 +106,7 @@ class Pomodoro:
                      category_id,
                      project_id,
                      hour,
-                     satisfaction,
+                     satisfaction=0,
                      duration=25):
         """
         This function adds the pomodoro data into the database
@@ -143,6 +161,35 @@ class Pomodoro:
                             (date, project_id))
         self.conn.commit()
 
+    def create_df(self, query):
+        """
+        Executes a query to the pomodoro dataset, then
+        creates and formats the information into a 
+        workable pandas dataframe
+        """
+        date_format = '%Y-%m-%d'
+        date_columns = {
+            'project_start': date_format,
+            'project_end': date_format,
+            'project_cancel': date_format
+        }
+        califications = {1: "Good", 2: "Bad"}
+        df = pd.read_sql_query(query, self.conn, parse_dates=date_columns)
+
+        # Join the pomodoro_date and pomodoro_hour
+        df['pomodoro_date'] = df.pomodoro_date + " " + df.pomodoro_hour
+        df["pomodoro_date"] = pd.to_datetime(df.pomodoro_date,
+                                             format="%Y-%m-%d %H:%M:%S")
+        df.drop('pomodoro_hour', axis=1, inplace=True)
+
+        # Replace the values in the calification to better understanding
+        df.replace({"pomodoro_calification": califications}, inplace=True)
+
+        # pomodoro_date as index is easier to filter when creating the dashboard
+        df.set_index('pomodoro_date', inplace=True, drop=False)
+
+        return df
+
     def create_database(self):
         if not os.path.exists(self.database_path):
             # Make some fresh tables using executescript()
@@ -182,8 +229,9 @@ class Recall:
     This class handles the different queries
     that we can make to the Recalls database
     """
-    #database_path = "data\recalls.db"
-    database_path = 'recalls_prueba.db'
+    database_path = "data\\recalls.db"
+
+    #database_path = 'recalls_prueba.db'
 
     def __init__(self):
         # create database if need
@@ -232,9 +280,9 @@ class Recall:
         Args:
             project_name: str.
         returns:
-            recalls: list of tuples. (recall, )
+            recalls: list of tuples. (title, recall)
         """
-        query = ("SELECT recall FROM Recalls WHERE project_name = ?")
+        query = ("SELECT title, recall FROM Recalls WHERE project_name = ?")
         self.cursor.execute(query, (project_name, ))
 
         recalls = self.cursor.fetchall()
