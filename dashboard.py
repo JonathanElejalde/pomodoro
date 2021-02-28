@@ -8,6 +8,8 @@ from queries import Pomodoro
 
 THEME = 'magma'
 
+# TO DO: Add docstings where needed
+
 
 def get_current_date():
     """
@@ -35,15 +37,15 @@ def monthly_chart(year, month, df):
     df_copy = df.copy()
     filtered = df_copy.loc[f'{year}/{month}']
 
-    month_name = filtered.pomodoro_date.dt.month_name()
+    month_name = filtered.full_date.dt.month_name()
     month_name = month_name.iloc[0]
 
     base = alt.Chart(
         filtered, title=f'Productivity in {month_name}').mark_circle().encode(
-            x=alt.X('monthdate(pomodoro_date):O',
+            x=alt.X('monthdate(full_date):O',
                     title='Days',
                     axis=alt.Axis(labelAngle=-90)),
-            y=alt.Y('hoursminutes(pomodoro_date)', title='Daily hours'),
+            y=alt.Y('hoursminutes(full_date)', title='Daily hours'),
         ).properties(width=400, height=200)
 
     stack = base.mark_bar().encode(y=alt.Y('count()', title='Daily pomodoros'),
@@ -65,11 +67,11 @@ def monthly_chart(year, month, df):
                           tooltip=[
                               alt.Tooltip('category', title='Category'),
                               alt.Tooltip('project', title='Project name'),
-                              alt.Tooltip('yearmonthdate(pomodoro_date)',
+                              alt.Tooltip('yearmonthdate(full_date)',
                                           title='Date'),
                               alt.Tooltip('pomodoro_calification',
                                           title='Satisfaction'),
-                              alt.Tooltip('hoursminutes(pomodoro_date)',
+                              alt.Tooltip('hoursminutes(full_date)',
                                           title='Start')
                           ],
                           size=alt.Size('pomodoro_calification',
@@ -96,25 +98,25 @@ def hourly_chart(df):
     grouped_chart = alt.Chart(new_df).mark_bar().encode(
         alt.X('pomodoro_calification:N', title="", axis=None),
         alt.Y('count():Q', title='Pomodoro count'),
-        alt.Column('hours(pomodoro_date):O',
+        alt.Column('hours(full_date):O',
                    title='Good and Bad pomodoros by hour'),
         alt.Color('pomodoro_calification:N', title='Calification'),
-        tooltip=[alt.Tooltip('hours(pomodoro_date)'),
+        tooltip=[alt.Tooltip('hours(full_date)'),
                  alt.Tooltip('count()')]).properties(width=20, height=200)
 
     heatmap = alt.Chart(
         bad_df, title='Bad pomodoros by day and hour').mark_rect().encode(
-            alt.X('hours(pomodoro_date)',
+            alt.X('hours(full_date)',
                   title='Hours',
                   axis=alt.Axis(labelAngle=-90)),
-            alt.Y('day(pomodoro_date):O', title='Day of the week'),
+            alt.Y('day(full_date):O', title='Day of the week'),
             alt.Color('count():Q',
                       title='Pomodoro count',
                       scale=alt.Scale(domain=(10, 1), scheme=THEME)),
             tooltip=[
                 alt.Tooltip('count()', title='Bad pomodoros'),
                 alt.Tooltip('sum(pomodoro_length)', title='Minutes wasted'),
-                alt.Tooltip('hours(pomodoro_date)', title='Hour')
+                alt.Tooltip('hours(full_date)', title='Hour')
             ]).properties(width=400, height=200)
 
     return grouped_chart & heatmap
@@ -136,6 +138,8 @@ def create_projects_df(df):
         'first',
         'project_cancel':
         'first',
+        'pomodoro_date':
+        'nunique',
         'pomodoro_length':
         'sum',
         'pomodoro_calification':
@@ -147,6 +151,7 @@ def create_projects_df(df):
         'project_start': 'start',
         'project_end': 'end',
         'project_cancel': 'cancel',
+        'pomodoro_date': 'working_days',
         'pomodoro_length': 'minutes',
         'pomodoro_calification': 'total_pomodoros'
     }
@@ -199,7 +204,7 @@ def projects_hours_days(df):
 
     chart = alt.Chart(
         df_copy, title='Projects').mark_point(filled=True).encode(
-            alt.X('yearmonthdate(start)', title="Project start date"),
+            alt.X('yearmonthdate(start)', title="Project starting date"),
             alt.Y('days', title='Days since the start'),
             color=alt.Color(
                 'status:N',
@@ -209,11 +214,13 @@ def projects_hours_days(df):
             size=alt.Size('hours',
                           title='Total hours invested in the project'),
             tooltip=[
-                alt.Tooltip('category'),
-                alt.Tooltip('project'),
-                alt.Tooltip('start', title='Project start date'),
-                alt.Tooltip('status'),
+                alt.Tooltip('category', title='Category'),
+                alt.Tooltip('project', title='Project'),
+                alt.Tooltip('start', title='Project starting date'),
+                alt.Tooltip('status', title='Status'),
                 alt.Tooltip('days', title='Days since the start'),
+                alt.Tooltip('working_days',
+                            title='Days with at least 1 pomodoro'),
                 alt.Tooltip('hours', title='Total hours invested'),
                 alt.Tooltip('pomodoros', title='Amount of pomodoros made')
             ]).add_selection(single).properties(width=800).interactive()
@@ -247,7 +254,7 @@ def plot_project(project, df):
 
     line = alt.Chart(filtered).mark_bar().encode(
         alt.X(
-            'yearmonthdate(pomodoro_date):O',
+            'yearmonthdate(full_date):O',
             # scale=alt.Scale(
             #     domain=[start.isoformat(), last.isoformat()]),
             axis=alt.Axis(labelAngle=-90)),
