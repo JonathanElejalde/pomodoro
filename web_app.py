@@ -30,14 +30,14 @@ def timer(minutes=5, mode="rest"):
     """
     if mode == "work":
         timer_length = minutes * 60
-        sound_file = 'end_working.wav'
+        sound_file = "end_working.wav"
 
     elif mode == "rest":
         timer_length = minutes * 60
-        sound_file = 'end_resting.wav'
+        sound_file = "end_resting.wav"
 
     while timer_length > 0:
-        #mins, seconds = divmod(timer_length, 60)
+        # mins, seconds = divmod(timer_length, 60)
 
         # time_left = str(mins).zfill(2) + ":" + str(seconds).zfill(2)
         # write_time.write(f'{mode.title()}ing ' + time_left + "\r", end="")
@@ -61,8 +61,8 @@ def run_pomodoro(pomodoro_queries):
     hour = pomodoro_queries.get_date_hour()
     # Save the value in the url for later use
     st.experimental_set_query_params(starting_hour=hour)
-    timer(minutes=25, mode='work')
-    timer(minutes=5, mode='rest')
+    timer(minutes=0.1, mode="work")
+    timer(minutes=0.1, mode="rest")
 
 
 def get_all_recalls(recall_queries, recall_project):
@@ -79,7 +79,7 @@ def get_all_recalls(recall_queries, recall_project):
         complete_recall: str.
     """
     recalls = recall_queries.get_recalls(recall_project)
-    recalls = [f'**{title}**    \n{recall}' for title, recall in recalls]
+    recalls = [f"**{title}**    \n{recall}" for title, recall in recalls]
     complete_recall = "\n\n".join(recalls)
 
     return complete_recall
@@ -109,66 +109,68 @@ if __name__ == "__main__":
     from streamlit.report_thread import add_report_ctx
 
     # Config the page
-    st.set_page_config(layout='wide')
+    st.set_page_config(layout="wide")
 
     # Pomodoro and Recall queries
     pomodoro_queries = Pomodoro()
     recall_queries = Recall()
 
-    st.title('Learning app')
+    st.title("Learning app")
 
     pomodoro, recall = st.beta_columns((1, 2))
 
     ######## POMODORO BLOCK ###########
     with pomodoro:
-        st.header('Pomodoro')
+        st.header("Pomodoro")
         categories = pomodoro_queries.get_categories()
         categories = {cat: id for cat, id in categories}
 
+        # Check if empty
+        if len(categories) == 0:
+            categories["THERE ARE NOT CATEGORIES CREATED"] = 0
+
         # Option to add new category if necessary
-        add_cat = st.beta_expander('Add new category')
+        add_cat = st.beta_expander("Add new category")
         new_cat_added = False
         with add_cat:
-            new_category = st.text_input('Add new category')
+            new_category = st.text_input("Add new category")
 
-            if st.button('Add category'):
+            if st.button("Add category"):
                 pomodoro_queries.create_category(new_category)
-                st.info(f'{new_category} was added')
+                st.info(f"{new_category} was added")
                 new_cat_added = True
                 new_categories = pomodoro_queries.get_categories()
                 new_categories = {cat: id for cat, id in new_categories}
 
         # Select category
         if new_cat_added:
-            category = st.selectbox('Choose a category',
-                                    list(new_categories.keys()))
+            category = st.selectbox("Choose a category", list(new_categories.keys()))
+            cat_id = new_categories[category]
         else:
-            category = st.selectbox('Choose a category',
-                                    list(categories.keys()))
-        cat_id = categories[category]
+            category = st.selectbox("Choose a category", list(categories.keys()))
+            cat_id = categories[category]
 
         # Select project
         projects = pomodoro_queries.get_projects(cat_id)
         projects = {proj: id for proj, id in projects}
 
         # Option to add a new project if necessary
-        add_proj = st.beta_expander('Add new project')
+        add_proj = st.beta_expander("Add new project")
         new_proj_added = False
         with add_proj:
-            new_project = st.text_input('Add new project')
-            if st.button('Add project'):
+            new_project = st.text_input("Add new project")
+            if st.button("Add project"):
                 pomodoro_queries.create_project(new_project, cat_id)
-                st.info(f'{new_project} was added')
+                st.info(f"{new_project} was added")
                 new_proj_added = True
                 new_projects = pomodoro_queries.get_projects(cat_id)
                 new_projects = {proj: id for proj, id in new_projects}
 
         # Select project
         if new_proj_added:
-            project = st.selectbox('Choose a project',
-                                   list(new_projects.keys()))
+            project = st.selectbox("Choose a project", list(new_projects.keys()))
         else:
-            project = st.selectbox('Choose a project', list(projects.keys()))
+            project = st.selectbox("Choose a project", list(projects.keys()))
 
         # When new category, this handle the errors
         try:
@@ -177,12 +179,11 @@ if __name__ == "__main__":
             pass
 
         # Start pomodoro
-        if st.button('Start Pomodoro'):
+        if st.button("Start Pomodoro"):
 
             # TO DO: TRY MULTIPROCESS
 
-            thread = threading.Thread(target=run_pomodoro,
-                                      args=[pomodoro_queries])
+            thread = threading.Thread(target=run_pomodoro, args=[pomodoro_queries])
             add_report_ctx(thread)
             thread.start()
 
@@ -190,79 +191,80 @@ if __name__ == "__main__":
         hour = st.experimental_get_query_params()
 
         try:
-            hour = hour['starting_hour']
+            hour = hour["starting_hour"]
             write_time = st.empty()
-            write_time.info(f'Pomodoro started at: {hour[0]}')
+            write_time.info(f"Pomodoro started at: {hour[0]}")
         except:
             pass
         sel_options = st.empty()
         send_btn = st.empty()
 
         selections = {"Good": 1, "Bad": 2}
-        selection = sel_options.selectbox("Pomodoro's satisfaction",
-                                          ('Good', 'Bad'))
+        selection = sel_options.selectbox("Pomodoro's satisfaction", ("Good", "Bad"))
 
         send_puntuation = st.empty()
-        send_puntuation.error('No calification/Firts pomodoro')
-        if send_btn.button('Send Satisfacion'):
+        send_puntuation.error("No calification/Firts pomodoro of the session")
+        if send_btn.button("Send Satisfacion"):
             hour = st.experimental_get_query_params()
             hour = hour["starting_hour"][0]
             satisfaction = selections[selection]
-            pomodoro_queries.add_pomodoro(cat_id,
-                                          proj_id,
-                                          hour,
-                                          satisfaction=satisfaction)
-            send_puntuation.success('Calification was sent')
+            pomodoro_queries.add_pomodoro(
+                cat_id, proj_id, hour, satisfaction=satisfaction
+            )
+            send_puntuation.success("Calification was sent")
 
-        if st.checkbox(f'Enable to End/Cancel {project.upper()}'):
+        if st.checkbox(
+            f"Enable to End/Cancel {'' if project == None else project.upper()}"
+        ):
             # Cancel/End
             # End: project is actually ended
             # Cancel: project closed before the end
 
-            end_cancel_selection = st.selectbox('Do you want to End/Cancel',
-                                                ('End', 'Cancel'))
+            end_cancel_selection = st.selectbox(
+                "Do you want to End/Cancel", ("End", "Cancel")
+            )
             st.error(
-                f'If you want to *{end_cancel_selection.upper()}* **{project}** hit the button'
+                f"If you want to *{end_cancel_selection.upper()}* **{project}** hit the button"
             )
 
-            if st.button('End/Cancel'):
-                if end_cancel_selection == 'End':
+            if st.button("End/Cancel"):
+                if end_cancel_selection == "End":
                     pomodoro_queries.end_project(proj_id)
-                elif end_cancel_selection == 'Cancel':
+                elif end_cancel_selection == "Cancel":
                     pomodoro_queries.cancel_project(proj_id)
 
     ######## RECALLS BLOCK ############
     with recall:
-        st.header('Recalls')
+        st.header("Recalls")
 
         # Select project
         recall_projects = recall_queries.get_projects()
         clean_projects = [name[0] for name in recall_projects]
-        recall_projects = ['ADD A NEW ONE'] + clean_projects
+        recall_projects = ["ADD A NEW ONE"] + clean_projects
 
         # Show current projects
-        current_project = st.selectbox('Current projects', recall_projects)
+        current_project = st.selectbox("Current projects", recall_projects)
 
         recall_project = st.text_input(
-            'Type a new project if not in current projects',
-            f"{'' if current_project == 'ADD A NEW ONE' else current_project}")
+            "Type a new project if not in current projects",
+            f"{'' if current_project == 'ADD A NEW ONE' else current_project}",
+        )
         title_input = st.empty()
         text_area = st.empty()
 
-        recall_title = title_input.text_input('Type a recall title')
-        recall_text = text_area.text_area('Type the recall')
+        recall_title = title_input.text_input("Type a recall title")
+        recall_text = text_area.text_area("Type the recall")
 
-        if st.button('Add Recall', key=1):
-            recall_queries.create_recall(recall_project, recall_title,
-                                         recall_text)
+        if st.button("Add Recall", key=1):
+            recall_queries.create_recall(recall_project, recall_title, recall_text)
             # Clean text areas
-            title_input.text_input('Type a recall title', value="", key=1)
-            text_area.text_area('Type the recall', value="", key=1)
+            title_input.text_input("Type a recall title", value="", key=1)
+            text_area.text_area("Type the recall", value="", key=1)
 
         # TO DO: Export all the recalls in the database as an ankidroid deck
 
     # Line
-    st.markdown('---')
+    st.markdown("---")
 
     ######## SEARCH AND DASHBOARD BLOCK ##########
 
@@ -271,12 +273,12 @@ if __name__ == "__main__":
     # Show search checkbox
     with search_col:
 
-        st.header('Search')
-        search_checkbox = st.checkbox('Enable search')
+        st.header("Search")
+        search_checkbox = st.checkbox("Enable search")
 
     with dashboard_col:
-        st.header('Dashboard')
-        dashboard_checkbox = st.checkbox('Enable Dashboard')
+        st.header("Dashboard")
+        dashboard_checkbox = st.checkbox("Enable Dashboard")
 
     # If search enable
     if search_checkbox:
@@ -284,22 +286,21 @@ if __name__ == "__main__":
 
         # Show the search column functionality
         with search_for_col:
-            search_text = st.text_input('Search for', "")
-            search_text_btn = st.button('Search')
+            search_text = st.text_input("Search for", "")
+            search_text_btn = st.button("Search")
 
         # Show all recalls project functionality
         with show_all_recalls_col:
-            project_to_show = st.selectbox('Choose a project', clean_projects)
-            show_recalls_btn = st.button('Show recalls')
+            project_to_show = st.selectbox("Choose a project", clean_projects)
+            show_recalls_btn = st.button("Show recalls")
 
             # Download recalls
-            download_recalls_btn = st.button('Download recalls')
+            download_recalls_btn = st.button("Download recalls")
             if download_recalls_btn:
-                complete_recall = get_all_recalls(recall_queries,
-                                                  project_to_show)
-                tmp_download_link = download_link(complete_recall,
-                                                  f'{project_to_show}.txt',
-                                                  'Click here to download')
+                complete_recall = get_all_recalls(recall_queries, project_to_show)
+                tmp_download_link = download_link(
+                    complete_recall, f"{project_to_show}.txt", "Click here to download"
+                )
                 st.markdown(tmp_download_link, unsafe_allow_html=True)
 
         # TO DO: Add a functionality or a way to clean the output
@@ -311,7 +312,7 @@ if __name__ == "__main__":
             for search_proj, search_title, search_recall in results:
                 st.subheader(search_title)
                 st.markdown(search_recall)
-                st.markdown('\n---\n')
+                st.markdown("\n---\n")
 
         # If show projects button is hit
         if show_recalls_btn:
@@ -321,33 +322,39 @@ if __name__ == "__main__":
     # If dashboard enable
     if dashboard_checkbox:
         df = pomodoro_queries.create_df(pomodoro_queries.QUERY)
-        year, month, day = dashboard.get_current_date()
 
-        # Set the selectboxes side-to-side
-        year_col, month_col = st.beta_columns((1, 1))
-        years = range(2020, year + 1)
-        year_index = years.index(year)
-        months = range(1, 13)
-        month_index = months.index(month)
-        with year_col:
-            year = st.selectbox('Year', years, index=year_index)
-        with month_col:
-            month = st.selectbox('Month', months, index=month_index)
+        if len(df) > 0:
+            year, month, day = dashboard.get_current_date()
 
-        monthly_chart = dashboard.monthly_chart(year, month, df)
-        st.altair_chart(monthly_chart, use_container_width=True)
+            # Set the selectboxes side-to-side
+            year_col, month_col = st.beta_columns((1, 1))
+            years = range(2020, year + 1)
+            year_index = years.index(year)
+            months = range(1, 13)
+            month_index = months.index(month)
+            with year_col:
+                year = st.selectbox("Year", years, index=year_index)
+            with month_col:
+                month = st.selectbox("Month", months, index=month_index)
 
-        # hour pomodoros
-        st.subheader('Understand your bad pomodoros')
-        hourly_chart = dashboard.hourly_chart(df)
-        st.altair_chart(hourly_chart, use_container_width=True)
+            monthly_chart = dashboard.monthly_chart(year, month, df)
+            st.altair_chart(monthly_chart, use_container_width=True)
 
-        # Project charts
-        projects_df = dashboard.create_projects_df(df)
+            # hour pomodoros
+            st.subheader("Understand your bad pomodoros")
+            hourly_chart = dashboard.hourly_chart(df)
+            st.altair_chart(hourly_chart, use_container_width=True)
 
-        st.subheader('Hours and days spent by project')
-        proj_hours_day = dashboard.projects_hours_days(projects_df)
-        st.altair_chart(proj_hours_day, use_container_width=True)
+            # Project charts
+            projects_df = dashboard.create_projects_df(df)
 
-        #  TO DO, Create a better plot for singul project. One that
-        # gives meaningful information
+            st.subheader("Hours and days spent by project")
+            proj_hours_day = dashboard.projects_hours_days(projects_df)
+            st.altair_chart(proj_hours_day, use_container_width=True)
+
+            #  TO DO, Create a better plot for singul project. One that
+            # gives meaningful information
+
+        else:
+            st.write("# No pomodoros to plot")
+
