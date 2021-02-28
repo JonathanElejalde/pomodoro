@@ -46,7 +46,8 @@ class MainPomodoro:
         ##### Buttons ######
         # Start the app in home
         self.pomodoro_ui.stacked_widget.setCurrentWidget(self.pomodoro_ui.home)
-        self.pomodoro_ui.create_pomodoro_btn.clicked.connect(self.show_categories)
+        self.pomodoro_ui.create_pomodoro_btn.clicked.connect(
+            self.show_categories)
         self.pomodoro_ui.start_pomodoro_btn.clicked.connect(self.start_timer)
 
         # Add new category
@@ -55,19 +56,20 @@ class MainPomodoro:
 
         # End or Cancel a project
         self.pomodoro_ui.end_proj_btn.clicked.connect(
-            lambda x: self.end_project(self.project_id, self.project_name)
-        )
+            lambda x: self.end_project(self.project_id, self.project_name))
         self.pomodoro_ui.cancel_proj_btn.clicked.connect(
-            lambda x: self.cancel_project(self.project_id, self.project_name)
-        )
+            lambda x: self.cancel_project(self.project_id, self.project_name))
 
         # open a new dialog if clicked add recall
         self.pomodoro_ui.add_recall_btn.clicked.connect(self.start_recall)
 
         # Allows to go back
-        self.pomodoro_ui.previous_window_btn1.clicked.connect(self.previous_window)
-        self.pomodoro_ui.previous_window_btn2.clicked.connect(self.previous_window)
-        self.pomodoro_ui.previous_window_btn3.clicked.connect(self.previous_window)
+        self.pomodoro_ui.previous_window_btn1.clicked.connect(
+            self.previous_window)
+        self.pomodoro_ui.previous_window_btn2.clicked.connect(
+            self.previous_window)
+        self.pomodoro_ui.previous_window_btn3.clicked.connect(
+            self.previous_window)
 
     def clear_layout(self, layout):
         while layout.count():
@@ -94,7 +96,8 @@ class MainPomodoro:
             self.pomodoro_ui.cat_layout.addWidget(buttons[category])
             buttons[category].clicked.connect(partial(self.show_projects, id))
 
-        self.pomodoro_ui.stacked_widget.setCurrentWidget(self.pomodoro_ui.categories)
+        self.pomodoro_ui.stacked_widget.setCurrentWidget(
+            self.pomodoro_ui.categories)
 
     def show_projects(self, category_id):
         # Track the category id
@@ -118,10 +121,10 @@ class MainPomodoro:
             buttons[project_name].setFont(font)
             self.pomodoro_ui.proj_layout.addWidget(buttons[project_name])
             buttons[project_name].clicked.connect(
-                partial(self.show_timer, project_id, project_name)
-            )
+                partial(self.show_timer, project_id, project_name))
 
-        self.pomodoro_ui.stacked_widget.setCurrentWidget(self.pomodoro_ui.projects)
+        self.pomodoro_ui.stacked_widget.setCurrentWidget(
+            self.pomodoro_ui.projects)
 
     def show_timer(self, project_id, project_name):
         # Track project_id and project_name
@@ -129,7 +132,8 @@ class MainPomodoro:
         self.project_name = project_name
 
         self.pomodoro_ui.current_proj.setText(project_name)
-        self.pomodoro_ui.stacked_widget.setCurrentWidget(self.pomodoro_ui.timer)
+        self.pomodoro_ui.stacked_widget.setCurrentWidget(
+            self.pomodoro_ui.timer)
 
     def start_timer(self):
         self.pomodoro_ui.pomodoro_added_label.setText("")
@@ -156,9 +160,8 @@ class MainPomodoro:
             self.satisfaction = 2
 
         # Save the pomodoro into the database
-        self.pomodoro_manager.add_pomodoro(
-            self.category_id, self.project_id, self.satisfaction
-        )
+        self.pomodoro_manager.add_pomodoro(self.category_id, self.project_id,
+                                           self.satisfaction)
         self.pomodoro_ui.pomodoro_added_label.setText("The pomodoro was added")
 
     def set_timer(self, time_left):
@@ -217,8 +220,7 @@ class MainPomodoro:
 
     def previous_window(self):
         self.pomodoro_ui.stacked_widget.setCurrentIndex(
-            (self.pomodoro_ui.stacked_widget.currentIndex() - 1) % 4
-        )
+            (self.pomodoro_ui.stacked_widget.currentIndex() - 1) % 4)
 
 
 class Timer(QThread):
@@ -268,4 +270,3 @@ if __name__ == "__main__":
     main_win = MainPomodoro()
     main_win.show()
     sys.exit(app.exec_())
-
