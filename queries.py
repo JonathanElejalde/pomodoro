@@ -190,6 +190,16 @@ class Pomodoro:
 
         return df
 
+    def get_all_projects(self):
+        """
+        Gets all the project names no matter their state.
+        """
+        self.cursor.execute("SELECT name FROM Projects")
+        projects = self.cursor.fetchall()
+        projects = [project[0] for project in projects]
+
+        return projects
+
     def create_database(self):
         if not os.path.exists(self.database_path):
             # Make some fresh tables using executescript()
@@ -324,9 +334,8 @@ class Recall:
 
 
 if __name__ == "__main__":
-    queries = Recall()
-    results = queries.search_in_recalls('batch norm')
+    pom_queries = Pomodoro()
 
-    for project_name, title, recall in results:
-        print(title)
-        print(recall)
+    projects = pom_queries.get_all_projects()
+    for pro in projects:
+        print(pro)
