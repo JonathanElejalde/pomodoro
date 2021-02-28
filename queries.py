@@ -177,16 +177,16 @@ class Pomodoro:
         df = pd.read_sql_query(query, self.conn, parse_dates=date_columns)
 
         # Join the pomodoro_date and pomodoro_hour
-        df['pomodoro_date'] = df.pomodoro_date + " " + df.pomodoro_hour
-        df["pomodoro_date"] = pd.to_datetime(df.pomodoro_date,
-                                             format="%Y-%m-%d %H:%M:%S")
+        df['full_date'] = df.pomodoro_date + " " + df.pomodoro_hour
+        df["full_date"] = pd.to_datetime(df.full_date,
+                                         format="%Y-%m-%d %H:%M:%S")
         df.drop('pomodoro_hour', axis=1, inplace=True)
 
         # Replace the values in the calification to better understanding
         df.replace({"pomodoro_calification": califications}, inplace=True)
 
         # pomodoro_date as index is easier to filter when creating the dashboard
-        df.set_index('pomodoro_date', inplace=True, drop=False)
+        df.set_index('full_date', inplace=True, drop=False)
 
         return df
 
