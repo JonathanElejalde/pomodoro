@@ -179,13 +179,8 @@ if __name__ == "__main__":
         # Start pomodoro
         if st.button('Start Pomodoro'):
 
-            # TO DO: TRY MULTIPROCESS AS WELL
-            # TO DO: Try the st.spinner using a thread. Also
-            # try adding a progress bar with that.
+            # TO DO: TRY MULTIPROCESS
 
-            # TO DO: If possible, freeze the app once the
-            # pomodoro has ended until the user sends the
-            # pomodoro's calification
             thread = threading.Thread(target=run_pomodoro,
                                       args=[pomodoro_queries])
             add_report_ctx(thread)
@@ -193,6 +188,7 @@ if __name__ == "__main__":
 
         # Retrieve the hour where the pomodoro started
         hour = st.experimental_get_query_params()
+
         try:
             hour = hour['starting_hour']
             write_time = st.empty()
@@ -207,7 +203,7 @@ if __name__ == "__main__":
                                           ('Good', 'Bad'))
 
         send_puntuation = st.empty()
-        send_puntuation.error('Calification needs to be sent')
+        send_puntuation.error('No calification/Firts pomodoro')
         if send_btn.button('Send Satisfacion'):
             hour = st.experimental_get_query_params()
             hour = hour["starting_hour"][0]
@@ -218,11 +214,11 @@ if __name__ == "__main__":
                                           satisfaction=satisfaction)
             send_puntuation.success('Calification was sent')
 
-        # Cancel/End
-        # End: project is actually ended
-        # Cancel: project closed before the end
+        if st.checkbox(f'Enable to End/Cancel {project.upper()}'):
+            # Cancel/End
+            # End: project is actually ended
+            # Cancel: project closed before the end
 
-        if st.checkbox('End/Cancel'):
             end_cancel_selection = st.selectbox('Do you want to End/Cancel',
                                                 ('End', 'Cancel'))
             st.error(
@@ -306,9 +302,10 @@ if __name__ == "__main__":
                                                   'Click here to download')
                 st.markdown(tmp_download_link, unsafe_allow_html=True)
 
-        # If search button is hit
         # TO DO: Add a functionality or a way to clean the output
         # when we don't need it anymore
+
+        # If search button is hit
         if search_text_btn:
             results = recall_queries.search_in_recalls(search_text)
             for search_proj, search_title, search_recall in results:
@@ -354,11 +351,3 @@ if __name__ == "__main__":
 
         #  TO DO, Create a better plot for singul project. One that
         # gives meaningful information
-
-        # Get all projects, select one and show a line chart with the
-        # pomdoros by day, bad one good ones etc.
-        # all_projects = pomodoro_queries.get_all_projects()
-        # project_to_plot = st.selectbox('Select a project to plot',
-        #                                all_projects)
-        # project_plot = dashboard.plot_project(project_to_plot, df)
-        # st.altair_chart(project_plot, use_container_width=True)
