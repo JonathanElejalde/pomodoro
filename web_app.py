@@ -241,8 +241,8 @@ if __name__ == "__main__":
 
         # Select project
         recall_projects = recall_queries.get_projects()
-        recall_projects = [name[0] for name in recall_projects]
-        recall_projects = ['ADD A NEW ONE'] + recall_projects
+        clean_projects = [name[0] for name in recall_projects]
+        recall_projects = ['ADD A NEW ONE'] + clean_projects
 
         # Show current projects
         current_project = st.selectbox('Current projects', recall_projects)
@@ -263,39 +263,66 @@ if __name__ == "__main__":
             title_input.text_input('Type a recall title', value="", key=1)
             text_area.text_area('Type the recall', value="", key=1)
 
-        if st.button('Download recalls'):
-            complete_recall = get_all_recalls(recall_queries, recall_project)
-            tmp_download_link = download_link(complete_recall,
-                                              f'{recall_project}.txt',
-                                              'Click here to download')
-            st.markdown(tmp_download_link, unsafe_allow_html=True)
-
         # TO DO: Export all the recalls in the database as an ankidroid deck
-
-        # Show all the recalls of a project
-        if st.checkbox('Show all the recalls for this project'):
-            complete_recall = get_all_recalls(recall_queries, recall_project)
-            st.markdown(complete_recall)
 
     # Line
     st.markdown('---')
 
-    ######## SEARCH BLOCK ##########
+    ######## SEARCH AND DASHBOARD BLOCK ##########
 
-    st.header('Search')
-    if st.checkbox('Enable Search'):
-        search_text = st.text_input('Search for', "")
-        results = recall_queries.search_in_recalls(search_text)
-        # Use checkbox instead
-        if st.button('Search'):
+    search_col, dashboard_col = st.beta_columns((1, 1))
+
+    # Show search checkbox
+    with search_col:
+
+        st.header('Search')
+        search_checkbox = st.checkbox('Enable search')
+
+    with dashboard_col:
+        st.header('Dashboard')
+        dashboard_checkbox = st.checkbox('Enable Dashboard')
+
+    # If search enable
+    if search_checkbox:
+        search_for_col, show_all_recalls_col = st.beta_columns((1, 1))
+
+        # Show the search column functionality
+        with search_for_col:
+            search_text = st.text_input('Search for', "")
+            search_text_btn = st.button('Search')
+
+        # Show all recalls project functionality
+        with show_all_recalls_col:
+            project_to_show = st.selectbox('Choose a project', clean_projects)
+            show_recalls_btn = st.button('Show recalls')
+
+            # Download recalls
+            download_recalls_btn = st.button('Download recalls')
+            if download_recalls_btn:
+                complete_recall = get_all_recalls(recall_queries,
+                                                  project_to_show)
+                tmp_download_link = download_link(complete_recall,
+                                                  f'{project_to_show}.txt',
+                                                  'Click here to download')
+                st.markdown(tmp_download_link, unsafe_allow_html=True)
+
+        # If search button is hit
+        # TO DO: Add a functionality or a way to clean the output
+        # when we don't need it anymore
+        if search_text_btn:
+            results = recall_queries.search_in_recalls(search_text)
             for search_proj, search_title, search_recall in results:
                 st.subheader(search_title)
                 st.markdown(search_recall)
                 st.markdown('\n---\n')
 
-    ######## DASHBOARD BLOCK #########
-    st.header('Dashboard')
-    if st.checkbox('Enable Dashboard'):
+        # If show projects button is hit
+        if show_recalls_btn:
+            complete_recall = get_all_recalls(recall_queries, project_to_show)
+            st.markdown(complete_recall)
+
+    # If dashboard enable
+    if dashboard_checkbox:
         df = pomodoro_queries.create_df(pomodoro_queries.QUERY)
         year, month, day = dashboard.get_current_date()
 
