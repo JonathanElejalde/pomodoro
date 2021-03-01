@@ -1,25 +1,33 @@
-# Pomodoros and recalls for learning
+# Learning with Pomodoros and Recalls
 
 Inspired by the wonderful Coursera course [Learning how to learn](https://www.coursera.org/learn/learning-how-to-learn).
-I wanted a programmatical way to apply some of the amazing things learned. Thus, I created this app that combines the 
-pomodoro and recall techniques. I used qt-designer to create a simple UI that let you create a 25 min pomodoro
-allowing us to add a category, a project name and finally add recalls or information that you may want to retrieve later.
+I wanted to create an app with two concepts that I found interesting "Pomodoros and Recalls." Thus, I created this app that combines both techniques.
 
+The app has had different versions since the beginning. I first created a console app where you can create pomodoros, and the code of this version can be found inside the `console` folder and we use the `app.py` to run it.
 
-- [Explanation about pomodoros](https://en.wikipedia.org/wiki/Pomodoro_Technique)
+Then, I decided to create a UI for the app where I could also add recalls, so I learned a little bit of PyQT5 which allowed to create an app that enables the creation of pomodoros and recalls.
+
+Finally, I wanted to see a dashboard and have the ability to search and show my recalls, therefore, I created the final version of this idea. I chose to do it using `Streamlit` because I work with data and is a tool that I already knew.
+
+The app is not completed yet, but I feel pretty good with the current result knowing the limitations tha `Streamlit` has to build the interface.
+
+## NOTE:
+
+The app has been designed as a personal app, that is why we need to run it locally and maybe in the future I make it available online.
 
 ### Install
 ```console
 git clone https://github.com/JonathanElejalde/pomodoro.git
+pip install -r requirements.txt
 ```
 
-### Run
+### 
 ```console
-python app.py
+streamlit run web_app.py
 ```
 
 ## Built With
 
-- Pyqt5 for the UI design. It is something simple
-- sqlite3 to store the pomodoros and recalls
-- Finally, regular python to create the functionality on top of the UI
+- The interface was created using `Streamlit`
+- The funcionality was created using python and libraries like `numpy, pandas`
+- Finally, the dashboard was created using `Altair`
