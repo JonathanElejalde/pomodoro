@@ -21,10 +21,39 @@ git clone https://github.com/JonathanElejalde/pomodoro.git
 pip install -r requirements.txt
 ```
 
-### 
+### Run
 ```console
 streamlit run web_app.py
 ```
+
+### Creating firts pomodoro
+
+These are the steps to start your firts pomodoro:
+
+1. Create a new category. Here you can add the projects whitin that category.
+2. Create a new project.
+3. Hit the `Start Pomodoro`. This will start a 25 min pomodoro, it will end with a `countdown` sound.
+    - Then 5 min of resting will start and these will end with a `tada` sound.
+
+4. If you want to end or cancel a project, enable the process by clicking the `Enable to End/Cancel [PROJECT NAME]` checkbox.
+
+### Adding recalls
+
+To create a recall, you need to add:
+    - A project name
+    - A recall title
+    - Recall text
+
+Finally, to save it into the database hit the `Add Recall` button.
+
+##### Note: 
+
+All these are necessary to retrieve the recalls by project name, and for searching specific information inside a recall.
+
+### Other functionalities
+
+The other functionalities like `Searching` and `Dashboard` you need to enable them by hitting the corresponding the checkbox.
+
 
 ## Built With
 
