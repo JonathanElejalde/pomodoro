@@ -40,9 +40,10 @@ These are the steps to start your firts pomodoro:
 ### Adding recalls
 
 To create a recall, you need to add:
-    - A project name
-    - A recall title
-    - Recall text
+
+* A project name
+* A recall title
+* Recall text
 
 Finally, to save it into the database hit the `Add Recall` button.
 
