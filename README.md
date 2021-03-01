@@ -61,3 +61,12 @@ The other functionalities like `Searching` and `Dashboard` you need to enable th
 - The interface was created using `Streamlit`
 - The funcionality was created using python and libraries like `numpy, pandas`
 - Finally, the dashboard was created using `Altair`
+
+
+### Dashboard Example
+
+This is how the dashboard could look with a little bit of information
+
+![Example 1](./docs/dashboard_1.svg)
+![Example 2](./docs/dashboard_2.svg)
+![Example 3](./docs/dashboard_3.svg)
