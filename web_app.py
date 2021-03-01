@@ -144,10 +144,12 @@ if __name__ == "__main__":
 
         # Select category
         if new_cat_added:
-            category = st.selectbox("Choose a category", list(new_categories.keys()))
+            category = st.selectbox("Choose a category",
+                                    list(new_categories.keys()))
             cat_id = new_categories[category]
         else:
-            category = st.selectbox("Choose a category", list(categories.keys()))
+            category = st.selectbox("Choose a category",
+                                    list(categories.keys()))
             cat_id = categories[category]
 
         # Select project
@@ -168,7 +170,8 @@ if __name__ == "__main__":
 
         # Select project
         if new_proj_added:
-            project = st.selectbox("Choose a project", list(new_projects.keys()))
+            project = st.selectbox("Choose a project",
+                                   list(new_projects.keys()))
         else:
             project = st.selectbox("Choose a project", list(projects.keys()))
 
@@ -183,7 +186,8 @@ if __name__ == "__main__":
 
             # TO DO: TRY MULTIPROCESS
 
-            thread = threading.Thread(target=run_pomodoro, args=[pomodoro_queries])
+            thread = threading.Thread(target=run_pomodoro,
+                                      args=[pomodoro_queries])
             add_report_ctx(thread)
             thread.start()
 
@@ -200,29 +204,30 @@ if __name__ == "__main__":
         send_btn = st.empty()
 
         selections = {"Good": 1, "Bad": 2}
-        selection = sel_options.selectbox("Pomodoro's satisfaction", ("Good", "Bad"))
+        selection = sel_options.selectbox("Pomodoro's satisfaction",
+                                          ("Good", "Bad"))
 
         send_puntuation = st.empty()
         send_puntuation.error("No calification/Firts pomodoro of the session")
-        if send_btn.button("Send Satisfacion"):
+        if send_btn.button("Send Calification"):
             hour = st.experimental_get_query_params()
             hour = hour["starting_hour"][0]
             satisfaction = selections[selection]
-            pomodoro_queries.add_pomodoro(
-                cat_id, proj_id, hour, satisfaction=satisfaction
-            )
+            pomodoro_queries.add_pomodoro(cat_id,
+                                          proj_id,
+                                          hour,
+                                          satisfaction=satisfaction)
             send_puntuation.success("Calification was sent")
 
         if st.checkbox(
-            f"Enable to End/Cancel {'' if project == None else project.upper()}"
+                f"Enable to End/Cancel {'' if project == None else project.upper()}"
         ):
             # Cancel/End
             # End: project is actually ended
             # Cancel: project closed before the end
 
-            end_cancel_selection = st.selectbox(
-                "Do you want to End/Cancel", ("End", "Cancel")
-            )
+            end_cancel_selection = st.selectbox("Do you want to End/Cancel",
+                                                ("End", "Cancel"))
             st.error(
                 f"If you want to *{end_cancel_selection.upper()}* **{project}** hit the button"
             )
@@ -256,7 +261,8 @@ if __name__ == "__main__":
         recall_text = text_area.text_area("Type the recall")
 
         if st.button("Add Recall", key=1):
-            recall_queries.create_recall(recall_project, recall_title, recall_text)
+            recall_queries.create_recall(recall_project, recall_title,
+                                         recall_text)
             # Clean text areas
             title_input.text_input("Type a recall title", value="", key=1)
             text_area.text_area("Type the recall", value="", key=1)
@@ -297,10 +303,11 @@ if __name__ == "__main__":
             # Download recalls
             download_recalls_btn = st.button("Download recalls")
             if download_recalls_btn:
-                complete_recall = get_all_recalls(recall_queries, project_to_show)
-                tmp_download_link = download_link(
-                    complete_recall, f"{project_to_show}.txt", "Click here to download"
-                )
+                complete_recall = get_all_recalls(recall_queries,
+                                                  project_to_show)
+                tmp_download_link = download_link(complete_recall,
+                                                  f"{project_to_show}.txt",
+                                                  "Click here to download")
                 st.markdown(tmp_download_link, unsafe_allow_html=True)
 
         # TO DO: Add a functionality or a way to clean the output
