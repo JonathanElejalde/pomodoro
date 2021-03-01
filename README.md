@@ -34,8 +34,8 @@ These are the steps to start your firts pomodoro:
 2. Create a new project.
 3. Hit the `Start Pomodoro`. This will start a 25 min pomodoro, it will end with a `countdown` sound.
     - Then 5 min of resting will start and these will end with a `tada` sound.
-
-4. If you want to end or cancel a project, enable the process by clicking the `Enable to End/Cancel [PROJECT NAME]` checkbox.
+4. Once the pomodoro ends, you have the opportunity to grade your pomodoro, it can be either `Good` or `Bad` then just push the `Send Calification` button. This is going to be useful to the `Dashboard` where you can find your study patterns. 
+5. Finally, If you want to end or cancel a project, enable the process by clicking the `Enable to End/Cancel [PROJECT NAME]` checkbox.
 
 ### Adding recalls
 
