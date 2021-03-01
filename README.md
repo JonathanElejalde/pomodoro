@@ -5,11 +5,11 @@ I wanted to create an app with two concepts that I found interesting "Pomodoros 
 
 The app has had different versions since the beginning. I first created a console app where you can create pomodoros, and the code of this version can be found inside the `console` folder and we use the `app.py` to run it.
 
-Then, I decided to create a UI for the app where I could also add recalls, so I learned a little bit of PyQT5 which allowed to create an app that enables the creation of pomodoros and recalls.
+Then, I decided to create a UI for the app where I could also add recalls, so I learned a little bit of PyQT5 which allowed me to create an app that enables the creation of pomodoros and recalls.
 
 Finally, I wanted to see a dashboard and have the ability to search and show my recalls, therefore, I created the final version of this idea. I chose to do it using `Streamlit` because I work with data and is a tool that I already knew.
 
-The app is not completed yet, but I feel pretty good with the current result knowing the limitations tha `Streamlit` has to build the interface.
+The app is not completed yet, but I feel pretty good with the current result knowing some of the limitations that `Streamlit` has to build the interface.
 
 ## NOTE:
 
