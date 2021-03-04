@@ -245,6 +245,7 @@ if __name__ == "__main__":
         # Select project
         recall_projects = recall_queries.get_projects()
         clean_projects = [name[0] for name in recall_projects]
+        clean_projects = sorted(clean_projects)
         recall_projects = ["ADD A NEW ONE"] + clean_projects
 
         # Show current projects
@@ -297,6 +298,7 @@ if __name__ == "__main__":
 
         # Show all recalls project functionality
         with show_all_recalls_col:
+
             project_to_show = st.selectbox("Choose a project", clean_projects)
             show_recalls_btn = st.button("Show recalls")
 
